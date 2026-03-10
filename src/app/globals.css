@@ -3,25 +3,64 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0a0a;
+  --foreground: #e8e8e8;
+  --accent: #a8a8a8;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Markdown content styling for stream entries */
+.prose-stream p {
+  margin-bottom: 0.75em;
+}
+.prose-stream p:last-child {
+  margin-bottom: 0;
+}
+.prose-stream a {
+  color: #e8e8e8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-stream a:hover {
+  color: #ffffff;
+}
+.prose-stream strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+.prose-stream em {
+  font-style: italic;
+}
+.prose-stream code {
+  background: #1a1a1a;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+.prose-stream ul,
+.prose-stream ol {
+  padding-left: 1.5em;
+  margin-bottom: 0.75em;
+}
+.prose-stream li {
+  margin-bottom: 0.25em;
+}
+
+/* Fade-in animation for stream entries */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
 }
