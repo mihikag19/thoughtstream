@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Lora, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-lora",
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "thoughtstream",
-  description: "Raw thoughts, published daily.",
+  title: "Mihika Gupta",
+  description: "Building things. Thinking out loud.",
 };
 
 export default function RootLayout({
@@ -20,8 +27,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} font-sans antialiased bg-[#0a0a0a] text-[#e8e8e8]`}>
+      <body
+        className={`${lora.variable} ${ibmPlexMono.variable} antialiased`}
+      >
         {children}
+
+        {/* Grain overlay — makes the dark background feel like paper, not screen */}
+        <svg className="grain-overlay" width="100%" height="100%">
+          <filter id="grain">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.65"
+              numOctaves="3"
+              stitchTiles="stitch"
+            />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#grain)" />
+        </svg>
       </body>
     </html>
   );

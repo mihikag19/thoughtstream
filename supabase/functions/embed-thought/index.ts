@@ -1,9 +1,12 @@
-// This is the foundation for the thought graph. Do not remove even if unused.
-// Future graph, UMAP, and similarity features depend on this data.
+// CRITICAL: This is the foundation for the thought graph, UMAP layout,
+// and semantic similarity features. Do not remove even if unused.
+// Every entry without an embedding is data that must be backfilled later.
 
-// Triggered after insert on the thoughts table via a Supabase database webhook.
-// Calls OpenAI text-embedding-3-small and stores the 1536-dim vector back to
-// thoughts.embedding. Runs asynchronously — never blocks the UI.
+// Triggered via HTTP from /api/thoughts/create after insert.
+// Receives { id, content }. Calls OpenAI text-embedding-3-small.
+// Stores 1536-dim vector back to thoughts.embedding via service role key.
+// Runs asynchronously — the capture page response is not blocked.
+// On error: log silently. Never surface to user. Never block capture.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -42,7 +45,7 @@ Deno.serve(async (req) => {
     const embeddingData = await embeddingRes.json();
     const embedding = embeddingData.data[0].embedding;
 
-    // Store vector back to thoughts table
+    // Store vector back to thoughts table using service role key
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const { error } = await supabase

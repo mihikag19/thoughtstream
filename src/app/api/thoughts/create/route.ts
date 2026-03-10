@@ -7,7 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { content, tag, password } = body;
+    const { content, title, type, tag, project_tag, password } = body;
 
     // Replace with Supabase Auth when multi-user
     const capturePassword = process.env.CAPTURE_PASSWORD;
@@ -19,6 +19,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
 
+    const validTypes = ["seedling", "budding", "evergreen"];
+    const thoughtType = validTypes.includes(type) ? type : "seedling";
+
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -28,7 +31,10 @@ export async function POST(request: NextRequest) {
       .from("thoughts")
       .insert({
         content: content.trim(),
+        title: title && title.trim() ? title.trim() : null,
+        type: thoughtType,
         tag: tag && tag.trim() ? tag.trim() : null,
+        project_tag: project_tag && project_tag.trim() ? project_tag.trim() : null,
         published: true,
         // user_id is null for MVP — will be set when multi-user is added
       })
@@ -38,6 +44,24 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Supabase insert error:", error);
       return NextResponse.json({ error: "Failed to save thought" }, { status: 500 });
+    }
+
+    // Fire embedding Edge Function asynchronously — never blocks UI
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    try {
+      fetch(`${supabaseUrl}/functions/v1/embed-thought`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${supabaseAnonKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ record: { id: data.id, content: data.content } }),
+      }).catch(() => {
+        // Silent — embedding is non-blocking
+      });
+    } catch {
+      // Silent — embedding is non-blocking
     }
 
     return NextResponse.json({ thought: data }, { status: 201 });

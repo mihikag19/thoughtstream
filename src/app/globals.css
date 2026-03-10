@@ -3,20 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #e8e8e8;
-  --accent: #a8a8a8;
+  --bg: #0a0a0a;
+  --bg-raised: #111110;
+  --bg-sidebar: #0e0e0d;
+  --text: #e2e2e2;
+  --text-muted: #555550;
+  --text-mid: #8a8478;
+  --text-dim: #2e2c28;
+  --accent: #c9a96e;
+  --accent-dim: rgba(201, 169, 110, 0.08);
+  --accent-border: rgba(201, 169, 110, 0.18);
+  --accent-budding: rgba(201, 169, 110, 0.20);
+  --blue: #7ba7c4;
+  --blue-dim: rgba(123, 167, 196, 0.07);
+  --border: #1c1c1a;
+  --border-mid: #242420;
+  --font-serif: var(--font-lora), Georgia, serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--font-serif);
 }
 
 /* Markdown content styling for stream entries */
@@ -27,7 +36,7 @@ body {
   margin-bottom: 0;
 }
 .prose-stream a {
-  color: #e8e8e8;
+  color: var(--text);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -42,10 +51,11 @@ body {
   font-style: italic;
 }
 .prose-stream code {
-  background: #1a1a1a;
+  background: var(--bg-raised);
   padding: 0.15em 0.4em;
   border-radius: 3px;
   font-size: 0.9em;
+  font-family: var(--font-mono);
 }
 .prose-stream ul,
 .prose-stream ol {
@@ -56,11 +66,82 @@ body {
   margin-bottom: 0.25em;
 }
 
-/* Fade-in animation for stream entries */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Essay reading view */
+.prose-essay {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.78;
+  color: var(--text);
+  max-width: 640px;
 }
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+.prose-essay p {
+  margin-bottom: 1.5em;
+}
+.prose-essay h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+.prose-essay h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.prose-essay a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-essay blockquote {
+  border-left: 2px solid var(--accent-border);
+  padding-left: 1em;
+  margin-left: 0;
+  color: var(--text-mid);
+  font-style: italic;
+}
+.prose-essay code {
+  background: var(--bg-raised);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+}
+.prose-essay ul,
+.prose-essay ol {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+/* Grain overlay SVG filter */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.32;
+}
+
+/* Pulse animation for the nav indicator */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 3s infinite ease-out;
+}
+
+/* Thermal map cell hover */
+.thermal-cell {
+  transition: transform 0.15s ease;
+}
+.thermal-cell:hover {
+  transform: scale(1.4);
 }
